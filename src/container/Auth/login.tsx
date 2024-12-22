@@ -101,8 +101,9 @@ export const LoginContainer: React.FC = () => {
     return (
         <Layout>
             <Head>
-                <title>Login | DocXel</title>
+                <title>Login | SafeLense</title>
             </Head>
+            
             <Box
                 sx={{
                     backgroundColor: 'background.paper',
@@ -116,7 +117,7 @@ export const LoginContainer: React.FC = () => {
                     sx={{
                         maxWidth: 550,
                         px: 3,
-                        py: '100px',
+                        py: '114px',
                         width: '100%',
                     }}
                 >

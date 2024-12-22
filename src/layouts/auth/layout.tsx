@@ -3,7 +3,7 @@ import NextLink from 'next/link'
 import { Box, Typography, Grid } from '@mui/material' // Use stable Grid here
 import Image from 'next/image'
 
-import Logo from '../../assets/images/logo.png'
+import Logo from '../../assets/images/logo123.png'
 import Auth from '../../assets/auth.svg'
 
 export const Layout: React.FC<PropsWithChildren> = ({
@@ -50,7 +50,7 @@ export const Layout: React.FC<PropsWithChildren> = ({
               width: 32
             }}
           >
-            <Image src={Logo} alt='docxel logo' width={130} height={60} />
+            <Image src={Logo} alt='docxel logo' width={150} height={70} />
           </Box>
         </Box>
         {children}
@@ -86,7 +86,7 @@ export const Layout: React.FC<PropsWithChildren> = ({
               sx={{ color: '#15B79E' }}
               target='_blank'
             >
-              DocXel
+              SafeLence
             </Box>
           </Typography>
           <Typography
@@ -94,7 +94,7 @@ export const Layout: React.FC<PropsWithChildren> = ({
             sx={{ mb: 3 }}
             variant='subtitle1'
           >
-            A professional doctor patient management
+            A professional detective system
           </Typography>
           <Image
             alt=''
