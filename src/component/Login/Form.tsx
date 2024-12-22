@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react'
+/* eslint-disable @next/next/no-img-element */
+import React from 'react';
 import {
     Button,
     Stack,
@@ -7,17 +7,20 @@ import {
     Typography,
     Paper,
     Box
-} from '@mui/material'
+} from '@mui/material';
 
 interface LoginFormProps {
     form: {
-        email: string | null
-        password: string | null
-    }
-    onFormChange: any
-    readOnly: boolean
-    errors: any
-    onSubmit: any
+        email: string | null;
+        password: string | null;
+    };
+    onFormChange: (field: 'email' | 'password') => (value: string) => void;
+    readOnly: boolean;
+    errors: {
+        email?: string;
+        password?: string;
+    };
+    onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
@@ -27,112 +30,95 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     errors,
     onSubmit
 }) => (
-    // Full screen container to center the form
+
     <Box
         display="flex"
-        justifyContent="center"
-        alignItems="center"
+        flexDirection="row"
         sx={{
-            minHeight: '100vh', // Take up full viewport height
-            background: 'linear-gradient(135deg, #15B79E 0%, #4B8B8C 100%)', // Optional background gradient
-            overflow: 'hidden', // Prevent scrolling
-            margin: 0, // Remove margin
+            // minHeight: '100vh',
+            backgroundColor: '#f2f2f2',
         }}
     >
-        <Paper
-            elevation={6}
+
+        <Box
+            flex={1}
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
             sx={{
-                width: { xs: '90%', sm: '400px' },
-                padding: 3,
-                borderRadius: 3,
-                bgcolor: 'rgba(255, 255, 255, 0.8)',  // Transparent effect
-                backdropFilter: 'blur(12px)',  // Slight blur effect for modern look
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'relative',
-                zIndex: 2,
+                background: 'white',
+                padding: 4,
             }}
         >
-            <Typography
-                variant="h4"
-                align="center"
-                color="primary.main"
-                sx={{ marginBottom: 3, fontWeight: 'bold' }}
+            <Paper
+                elevation={6}
+                sx={{
+                    width: { xs: '90%', sm: '400px' },
+                    padding: 4,
+                    borderRadius: 4,
+                    bgcolor: 'rgba(255, 255, 255, 0.95)',
+                    backdropFilter: 'blur(10px)',
+                }}
             >
-                Welcome Back
-            </Typography>
-            <form onSubmit={onSubmit}>
-                <Stack spacing={3}>
-                    <TextField
-                        fullWidth
-                        label="User Email"
-                        name="email"
-                        type="email"
-                        value={form.email || ''}
-                        onChange={(e) => onFormChange('email')(e.target.value)}
-                        disabled={readOnly}
-                        error={!!errors.email}
-                        helperText={errors.email}
-                        variant="outlined"
-                        sx={{
-                            borderRadius: 2,
-                            '& .MuiOutlinedInput-root': {
-                                '& fieldset': {
-                                    borderColor: 'rgba(0, 0, 0, 0.23)',
-                                },
-                                '&:hover fieldset': {
-                                    borderColor: '#15B79E',
-                                },
-                                '&.Mui-focused fieldset': {
-                                    borderColor: '#15B79E',
-                                },
-                            },
-                        }}
-                    />
-                    <TextField
-                        fullWidth
-                        label="Password"
-                        name="password"
-                        type="password"
-                        value={form.password || ''}
-                        onChange={(e) => onFormChange('password')(e.target.value)}
-                        disabled={readOnly}
-                        error={!!errors.password}
-                        helperText={errors.password}
-                        variant="outlined"
-                        sx={{
-                            borderRadius: 2,
-                            '& .MuiOutlinedInput-root': {
-                                '& fieldset': {
-                                    borderColor: 'rgba(0, 0, 0, 0.23)',
-                                },
-                                '&:hover fieldset': {
-                                    borderColor: '#15B79E',
-                                },
-                                '&.Mui-focused fieldset': {
-                                    borderColor: '#15B79E',
-                                },
-                            },
-                        }}
-                    />
-                </Stack>
-                <Button
-                    fullWidth
-                    size="large"
-                    sx={{
-                        mt: 3,
-                        borderRadius: 2,
-                        bgcolor: '#15B79E',
-                        '&:hover': {
-                            bgcolor: '#119e7c',
-                        },
-                    }}
-                    type="submit"
-                    variant="contained"
+                <Typography
+                    variant="h4"
+                    align="center"
+                    color="text.primary"
+                    sx={{ marginBottom: 3, fontWeight: 'bold' }}
                 >
-                    Sign In
-                </Button>
-            </form>
-        </Paper>
+                    Welcome Back!
+                </Typography>
+
+                <form onSubmit={onSubmit}>
+                    <Stack spacing={3}>
+                        <TextField
+                            fullWidth
+                            label="Email"
+                            name="email"
+                            type="email"
+                            value={form.email || ''}
+                            onChange={(e) => onFormChange('email')(e.target.value)}
+                            disabled={readOnly}
+                            error={!!errors.email}
+                            helperText={errors.email}
+                            variant="outlined"
+                        />
+
+                        <TextField
+                            fullWidth
+                            label="Password"
+                            name="password"
+                            type="password"
+                            value={form.password || ''}
+                            onChange={(e) => onFormChange('password')(e.target.value)}
+                            disabled={readOnly}
+                            error={!!errors.password}
+                            helperText={errors.password}
+                            variant="outlined"
+                        />
+
+                    </Stack>
+
+                    <Button
+                        fullWidth
+                        size="large"
+                        sx={{
+                            mt: 3,
+                            borderRadius: 2,
+                            bgcolor: '#15B79E',
+                            '&:hover': {
+                                bgcolor: '#119e7c',
+                            },
+                        }}
+                        type="submit"
+                        variant="contained"
+                    >
+                        Login
+                    </Button>
+                </form>
+            </Paper>
+        </Box>
     </Box>
-)
+);
+
+export default LoginForm;
