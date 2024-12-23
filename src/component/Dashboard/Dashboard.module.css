@@ -1,0 +1,21 @@
+.container {
+  position: relative;
+  width: 100%;
+  height: auto;
+}
+
+.webcam {
+  min-width: 100%;
+  max-height: 100vh;
+  border-radius: 8px;
+}
+
+.canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  pointer-events: none; /* Prevent interaction */
+  width: 100%;
+  max-height: 100vh;
+}
