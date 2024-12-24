@@ -47,10 +47,16 @@ const ObjectDetection: React.FC = () => {
         <div>Loading AI Model...</div>
       ) : (
         <>
-          {/* Webcam video */}
-          <Webcam ref={webcamRef} className={styles.webcam} muted />
-
-          {/* Canvas for bounding boxes */}
+          <Webcam
+            ref={webcamRef}
+            className={styles.webcam}
+            videoConstraints={{
+              width: 1280,
+              height: 720,
+              facingMode: "user",
+            }}
+            muted
+          />
           <canvas ref={canvasRef} className={styles.canvas} />
         </>
       )}
