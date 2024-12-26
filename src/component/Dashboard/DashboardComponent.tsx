@@ -1,78 +1,6 @@
-// "use client";
-
-// import React, { useEffect, useRef, useState } from "react";
-// import Webcam from "react-webcam";
-// import { load as cocoSSDLoad } from "@tensorflow-models/coco-ssd";
-// import * as tf from "@tensorflow/tfjs";
-// import { renderPredictions } from "../../utilities/render-predictions";
-// import styles from "./Dashboard.module.css";
-
-// const ObjectDetection: React.FC = () => {
-//   const [isLoading, setIsLoading] = useState<boolean>(true);
-//   const webcamRef = useRef<Webcam | null>(null);
-//   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-//   async function runCoco() {
-//     await tf.setBackend("webgl");
-//     setIsLoading(true);
-//     const net = await cocoSSDLoad();
-//     setIsLoading(false);
-
-//     setInterval(() => {
-//       if (canvasRef.current && webcamRef.current?.video?.readyState === 4) {
-//         const video = webcamRef.current.video;
-
-//         // Match canvas size to video size
-//         canvasRef.current.width = video.videoWidth;
-//         canvasRef.current.height = video.videoHeight;
-
-//         // Get canvas context and run detection
-//         const ctx = canvasRef.current.getContext("2d");
-//         if (ctx) {
-//           net.detect(video).then((detections) => {
-//             renderPredictions(detections, ctx);
-//           });
-//         }
-//       }
-//     }, 100);
-//   }
-
-//   useEffect(() => {
-//     runCoco();
-//   }, []);
-
-//   return (
-//     <div className={styles.container}>
-//       {isLoading ? (
-//         <div>Loading AI Model...</div>
-//       ) : (
-//         <>
-//           <Webcam
-//             ref={webcamRef}
-//             className={styles.webcam}
-//             videoConstraints={{
-//               width: 1280,
-//               height: 720,
-//               facingMode: "user",
-//             }}
-//             muted
-//           />
-//           <canvas ref={canvasRef} className={styles.canvas} />
-//         </>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default ObjectDetection;
-
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import Webcam from "react-webcam";
-import { load as cocoSSDLoad } from "@tensorflow-models/coco-ssd";
-import * as tf from "@tensorflow/tfjs";
-import { renderPredictions } from "../../utilities/render-predictions";
 import styles from "./Dashboard.module.css";
 
 const Navbar: React.FC = () => (
@@ -94,43 +22,71 @@ const Navbar: React.FC = () => (
 
 const Header: React.FC = () => (
   <header className={styles.header}>
-    <h1>Object Detection Dashboard</h1>
+    <h1>Real-Time Object Detection Dashboard</h1>
     <p>Experience real-time object detection with AI technology</p>
   </header>
 );
 
 const ObjectDetection: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const webcamRef = useRef<Webcam | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const socketRef = useRef<WebSocket | null>(null);
 
-  async function runCoco() {
-    await tf.setBackend("webgl");
+  const connectWebSocket = () => {
     setIsLoading(true);
-    const net = await cocoSSDLoad();
-    setIsLoading(false);
+    socketRef.current = new WebSocket("ws://127.0.0.1:8000/ws");
 
-    setInterval(() => {
-      if (canvasRef.current && webcamRef.current?.video?.readyState === 4) {
-        const video = webcamRef.current.video;
+    socketRef.current.onopen = () => {
+      console.log("WebSocket connected");
+      setIsLoading(false);
+    };
 
-        // Match canvas size to video size
-        canvasRef.current.width = video.videoWidth;
-        canvasRef.current.height = video.videoHeight;
+    socketRef.current.onclose = () => {
+      console.log("WebSocket disconnected");
+      setIsLoading(true);
+    };
 
-        // Get canvas context and run detection
-        const ctx = canvasRef.current.getContext("2d");
-        if (ctx) {
-          net.detect(video).then((detections) => {
-            renderPredictions(detections, ctx);
-          });
+    socketRef.current.onmessage = (event) => {
+      if (typeof event.data === "string") {
+        const metadata = JSON.parse(event.data);
+        if (canvasRef.current) {
+          canvasRef.current.width = metadata.width;
+          canvasRef.current.height = metadata.height;
         }
+      } else if (event.data instanceof Blob) {
+        const img = new Image();
+        img.onload = () => {
+          if (canvasRef.current) {
+            const ctx = canvasRef.current.getContext("2d");
+            if (ctx) {
+              ctx.clearRect(
+                0,
+                0,
+                canvasRef.current.width,
+                canvasRef.current.height
+              );
+              ctx.drawImage(
+                img,
+                0,
+                0,
+                canvasRef.current.width,
+                canvasRef.current.height
+              );
+            }
+          }
+        };
+        img.src = URL.createObjectURL(event.data);
       }
-    }, 100);
-  }
+    };
+  };
 
   useEffect(() => {
-    runCoco();
+    connectWebSocket();
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
+    };
   }, []);
 
   return (
@@ -142,16 +98,6 @@ const ObjectDetection: React.FC = () => {
           <div>Loading AI Model...</div>
         ) : (
           <div className={styles.videoWrapper}>
-            <Webcam
-              ref={webcamRef}
-              className={styles.webcam}
-              videoConstraints={{
-                width: 500,
-                height: 500,
-                facingMode: "user",
-              }}
-              muted
-            />
             <canvas ref={canvasRef} className={styles.canvas} />
           </div>
         )}
